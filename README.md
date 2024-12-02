@@ -12,6 +12,9 @@ Clonare il repository
 ```bash
 cd be
 
+// copiare env
+$ cp env.dist .env
+
 $ npm i
 
 // verificare i valori del file di evn
