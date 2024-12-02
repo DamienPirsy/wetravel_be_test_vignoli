@@ -1,0 +1,45 @@
+version: '3.9'
+services:
+  app:
+    build:
+        context: .
+        dockerfile: Dockerfile
+        target: dev
+        args:
+          flavor: "alpine"
+        labels:
+            - "WRTravel"
+    container_name: weroad-travel-vignoli
+    init: true
+    networks:
+      wr_network:
+        aliases:
+          - weroad-travel.local
+    volumes:
+      - .:/app:delegated
+    command: [ "npm", "run", "start:dev" ]
+    env_file:
+        - .env
+    ports:
+      - "3333:3000"
+
+  postgres:
+    image: postgres:15
+    container_name: postgres-wetravel
+    restart: always
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:-postgres}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-password}"
+      POSTGRES_DB: "${POSTGRES_DB:-weroad_test}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      wr_network:
+
+networks:
+  wr_network:
+
+volumes:
+  postgres_data:

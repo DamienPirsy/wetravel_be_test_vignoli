@@ -1,0 +1,99 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Cart {
+  amount: Int!
+  createdAt: DateTime!
+  expiresAt: DateTime!
+  id: String!
+  packId: String!
+  seats: Int!
+  updatedAt: DateTime
+  userId: String!
+}
+
+input CartRequestDto {
+  email: String!
+  packId: String!
+  seats: Int!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+type Mutation {
+  addToCart(cartRequest: CartRequestDto!): Cart!
+  createOrder(orderCreate: OrderCreateDto!): OrderResponseDto!
+  deleteCart(cartId: String!): Boolean!
+  updateOrder(orderUpdate: OrderUpdateDto!): OrderResponseDto!
+}
+
+type Order {
+  createdAt: DateTime!
+  orderStatus: String!
+  packId: String!
+  paymentData: JSON
+  price: Int!
+  seats: Int!
+  totalPrice: Int!
+  updatedAt: DateTime!
+  userId: String!
+}
+
+input OrderCreateDto {
+  cartId: String!
+  packId: String!
+  price: Int!
+  seats: Int!
+  totalPrice: Int!
+  userId: String!
+}
+
+type OrderResponseDto {
+  createdAt: DateTime!
+  id: String!
+  orderStatus: String!
+  packId: String!
+  paymentData: JSON
+  seats: Int!
+  totalPrice: Int!
+  userId: String!
+}
+
+input OrderUpdateDto {
+  orderId: String!
+  orderStatus: String!
+  paymentData: JSON!
+}
+
+type Pack {
+  createdAt: DateTime!
+  deletedAt: DateTime
+  description: String!
+  endingDate: String!
+  freeSeats: Int!
+  id: String!
+  maxSeats: Int!
+  moods: JSON!
+  name: String!
+  price: Int!
+  slug: String!
+  startingDate: String!
+  updatedAt: DateTime!
+}
+
+type Query {
+  getAllOrders: [Order!]!
+  getAllPackages: [Pack!]!
+  getPackageById(id: String!): Pack
+  getUserCart(userId: String!): Cart!
+  getUserOrders(userId: String!): [Order!]!
+}

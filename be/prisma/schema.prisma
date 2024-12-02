@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+// utenti (solo email per ora)
+model User {
+  id            String       @id @default(uuid())
+  email         String       @unique
+  Cart Cart[]
+  Order Order[]
+}
+
+// pacchetti viaggio
+model Pack {
+  id            String       @id @default(uuid())
+  slug          String
+  name          String
+  description     String
+  startingDate    String
+  endingDate      String
+  price         Int         @default(0)
+  maxSeats      Int         @default(5)
+  freeSeats     Int         @default(5)
+  moods         Json
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now())
+  deletedAt     DateTime?
+  Order Order[]
+  Cart Cart[]
+}
+
+// carrello
+model Cart {
+  id            String       @id @default(uuid())
+  user          User         @relation(fields: [userId], references: [id])
+  userId        String       @unique   // l'utente deve essere univoco
+  pack          Pack @relation(fields: [packId], references: [id])  // relation with packs
+  packId        String
+  amount        Int
+  seats         Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now())
+  expiresAt     DateTime
+}
+
+enum Step {
+  SELECT
+  USERDATA
+  PAYMENT
+}
+
+// tabella dei viaggi acquistati
+model Order {
+  id            String       @id @default(uuid())
+  pack          Pack @relation(fields: [packId], references: [id])  // relation with packs
+  packId        String
+  user          User         @relation(fields: [userId], references: [id])  // relation with users
+  userId        String
+  price         Int         @default(0)
+  seats         Int
+  totalPrice    Int
+  paymentData   Json?    // fake
+  orderStatus   OrderStatus @default(PENDING)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now())
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELED
+}
